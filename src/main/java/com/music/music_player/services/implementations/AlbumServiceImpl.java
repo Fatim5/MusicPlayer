@@ -1,48 +1,100 @@
 package com.music.music_player.services.implementations;
 
-import com.music.music_player.dto.AlbumDTO;
+import com.music.music_player.dto.requests.AlbumRequestDTO;
+import com.music.music_player.dto.responses.AlbumResponseDTO;
+import com.music.music_player.entities.Artiste;
+import com.music.music_player.exceptions.ResourceNotFoundException;
 import com.music.music_player.mappers.AlbumMapper;
 import com.music.music_player.entities.Album;
 import com.music.music_player.repository.AlbumRepository;
 import com.music.music_player.services.interfaces.AlbumService;
+import com.music.music_player.storage.FileStorageService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
-
-    public AlbumServiceImpl(AlbumRepository albumRepository) {
-        this.albumRepository = albumRepository;
-    }
+    private final AlbumMapper albumMapper;
+    private final FileStorageService fileStorageService;
 
     @Override
-    public AlbumDTO save(Album album) {
+    public AlbumResponseDTO saveAlbum(AlbumRequestDTO requestDTO) {
+        Album album = albumMapper.toEntity(requestDTO);
         Album saved = albumRepository.save(album);
-        return AlbumMapper.toDTO(saved);
+        return albumMapper.toDTO(saved);
     }
 
     @Override
-    public List<AlbumDTO> findAll() {
+    public List<AlbumResponseDTO> findAllAlbums() {
         return albumRepository.findAll()
                 .stream()
-                .map(AlbumMapper::toDTO)
+                .map(albumMapper::toDTO)
                 .toList();
     }
 
     @Override
-    public AlbumDTO findById(Long id) {
+    public AlbumResponseDTO findAlbumById(Long id) {
 
         Album album = albumRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Album introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Album introuvable avec l'ID : " + id ));
 
-        return AlbumMapper.toDTO(album);
+        return albumMapper.toDTO(album);
     }
 
     @Override
-    public void delete(Long id) {
-        albumRepository.deleteById(id);
+    public AlbumResponseDTO findAlbumByTitre(String titre) {
+
+        Album album = albumRepository.findByTitre(titre)
+                .orElseThrow(() -> new ResourceNotFoundException("Album introuvable avec le titre : " + titre));
+
+        return albumMapper.toDTO(album);
+    }
+
+    @Override
+    public AlbumResponseDTO updateAlbum(Long id, AlbumRequestDTO requestDTO) {
+
+        Album existing = albumRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Album introuvable avec l'ID : " + id));
+
+        existing.setTitre(requestDTO.getTitre());
+        existing.setImage(requestDTO.getImage());
+
+        if (requestDTO.getArtisteId() != null) {
+            Artiste artiste = new Artiste();
+            artiste.setId(requestDTO.getArtisteId());
+            existing.setArtiste(artiste);
+        }
+
+        return albumMapper.toDTO(
+                albumRepository.save(existing)
+        );
+    }
+
+    @Override
+    public void deleteAlbum(Long id) {
+
+        Album album = albumRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Album introuvable avec l'ID : " + id
+                        ));
+
+        if (album.getImage() != null) {
+            fileStorageService.deleteFile(
+                    "images",
+                    album.getImage()
+            );
+        }
+
+        albumRepository.delete(album);
+
     }
 }

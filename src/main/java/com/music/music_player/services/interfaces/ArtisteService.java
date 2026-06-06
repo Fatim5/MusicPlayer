@@ -1,18 +1,21 @@
 package com.music.music_player.services.interfaces;
 
-import com.music.music_player.dto.ArtisteDTO;
-import com.music.music_player.entities.Artiste;
+import com.music.music_player.dto.requests.ArtisteRequestDTO;
+import com.music.music_player.dto.responses.ArtisteResponseDTO;
+
 import java.util.List;
 
 public interface ArtisteService {
 
-    ArtisteDTO save(Artiste artiste);
+    ArtisteResponseDTO saveArtiste(ArtisteRequestDTO requestDTO);
 
-    List<ArtisteDTO> findAll();
+    List<ArtisteResponseDTO> findAllArtistes();
 
-    ArtisteDTO findById(Long id);
+    ArtisteResponseDTO findArtisteById(Long id);
 
-    ArtisteDTO update(Long id, Artiste artiste);
+    ArtisteResponseDTO findArtisteByNom(String nom);
 
-    void delete(Long id);
+    ArtisteResponseDTO updateArtiste(Long id, ArtisteRequestDTO requestDTO);
+
+    void deleteArtiste(Long id);
 }

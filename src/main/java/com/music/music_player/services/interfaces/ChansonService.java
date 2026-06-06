@@ -1,17 +1,23 @@
 package com.music.music_player.services.interfaces;
 
-import com.music.music_player.dto.ChansonDTO;
-import com.music.music_player.entities.Chanson;
+import com.music.music_player.dto.requests.ChansonRequestDTO;
+import com.music.music_player.dto.responses.ChansonResponseDTO;
 
 import java.util.List;
 
 public interface ChansonService {
 
-    ChansonDTO save(Chanson chanson);
+    ChansonResponseDTO saveChanson(ChansonRequestDTO RequestDTO);
 
-    List<ChansonDTO> findAll();
+    List<ChansonResponseDTO> findAllChansons();
 
-    ChansonDTO findById(Long id);
+    ChansonResponseDTO findChansonById(Long id);
 
-    void delete(Long id);
+    ChansonResponseDTO findChansonByTitre(String titre);
+
+    ChansonResponseDTO updateChanson(Long id, ChansonRequestDTO RequestDTO);
+
+    void deleteChanson(Long id);
+
+
 }
