@@ -1,31 +1,31 @@
 package com.music.music_player.mappers;
 
-import com.music.music_player.dto.ArtisteDTO;
+import com.music.music_player.dto.requests.ArtisteRequestDTO;
+import com.music.music_player.dto.responses.ArtisteResponseDTO;
 import com.music.music_player.entities.Artiste;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ArtisteMapper {
 
-    // Entity → DTO
-    public static ArtisteDTO toDTO(Artiste artiste) {
-
-        ArtisteDTO dto = new ArtisteDTO();
-        dto.setId(artiste.getId());
-        dto.setNom(artiste.getNom());
-        dto.setDescription(artiste.getDescription());
-        dto.setImage(artiste.getImage());
-
-        return dto;
+    // DTO → Entity
+    public Artiste toEntity(ArtisteRequestDTO dto) {
+        if (dto == null) return null;
+        return Artiste.builder()
+                .nom(dto.getNom())
+                .description(dto.getDescription())
+                .image(dto.getImage())
+                .build();
     }
 
-    // DTO → Entity
-    public static Artiste toEntity(ArtisteDTO dto) {
-
-        Artiste artiste = new Artiste();
-        artiste.setId(dto.getId());
-        artiste.setNom(dto.getNom());
-        artiste.setDescription(dto.getDescription());
-        artiste.setImage(dto.getImage());
-
-        return artiste;
+    // Entity → DTO
+    public  ArtisteResponseDTO toDTO(Artiste artiste) {
+        if (artiste == null) return null;
+        return ArtisteResponseDTO.builder()
+                .id(artiste.getId())
+                .nom(artiste.getNom())
+                .description(artiste.getDescription())
+                .image(artiste.getImage())
+                .build();
     }
 }

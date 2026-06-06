@@ -45,4 +45,23 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     }
 
+    @Override
+    public void deleteFile(String folder, String fileName) {
+
+        try {
+
+            Path path = Paths.get(
+                    "uploads/" + folder + "/" + fileName
+            );
+
+            Files.deleteIfExists(path);
+
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Erreur lors de la suppression du fichier"
+            );
+        }
+
+    }
+
 }

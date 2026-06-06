@@ -1,50 +1,51 @@
 package com.music.music_player.controller;
 
-import com.music.music_player.dto.ArtisteDTO;
-import com.music.music_player.entities.Artiste;
+import com.music.music_player.dto.requests.ArtisteRequestDTO;
+import com.music.music_player.dto.responses.ArtisteResponseDTO;
 import com.music.music_player.mappers.ArtisteMapper;
 import com.music.music_player.services.interfaces.ArtisteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/artistes")
-@CrossOrigin("*")
+@RequiredArgsConstructor
 public class ArtisteController {
 
     private final ArtisteService artisteService;
 
-    public ArtisteController(ArtisteService artisteService) {
-        this.artisteService = artisteService;
-    }
-
     @PostMapping
-    public ArtisteDTO save(@RequestBody ArtisteDTO dto) {
+    public ArtisteResponseDTO save(@RequestBody ArtisteRequestDTO dto) {
 
-        Artiste artiste = ArtisteMapper.toEntity(dto);
-        return artisteService.save(artiste);
+        return artisteService.saveArtiste(dto);
     }
     @PutMapping("/{id}")
-    public ArtisteDTO update(
+    public ArtisteResponseDTO update(
             @PathVariable Long id,
-            @RequestBody ArtisteDTO dto) {
+            @RequestBody ArtisteRequestDTO dto) {
 
-        return artisteService.update(id, ArtisteMapper.toEntity(dto));
+        return artisteService.updateArtiste(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        artisteService.delete(id);
+        artisteService.deleteArtiste(id);
     }
 
     @GetMapping
-    public List<ArtisteDTO> findAll() {
-        return artisteService.findAll();
+    public List<ArtisteResponseDTO> findAll() {
+        return artisteService.findAllArtistes();
     }
 
     @GetMapping("/{id}")
-    public ArtisteDTO findById(@PathVariable Long id) {
-        return artisteService.findById(id);
+    public ArtisteResponseDTO findById(@PathVariable Long id) {
+        return artisteService.findArtisteById(id);
+    }
+
+    @GetMapping("/nom/{nom}")
+    public ArtisteResponseDTO findBynom(@PathVariable String nom) {
+        return artisteService.findArtisteByNom(nom);
     }
 }

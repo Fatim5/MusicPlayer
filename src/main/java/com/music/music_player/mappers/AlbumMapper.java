@@ -1,33 +1,25 @@
 package com.music.music_player.mappers;
 
-import com.music.music_player.dto.AlbumDTO;
+import com.music.music_player.dto.requests.AlbumRequestDTO;
+import com.music.music_player.dto.responses.AlbumResponseDTO;
 import com.music.music_player.entities.Album;
 import com.music.music_player.entities.Artiste;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AlbumMapper {
 
-    // ENTITY → DTO
-    public static AlbumDTO toDTO(Album album) {
+    // DTO → Entity
+    public Album toEntity(AlbumRequestDTO dto) {
 
-        AlbumDTO dto = new AlbumDTO();
-        dto.setId(album.getId());
-        dto.setTitre(album.getTitre());
-        dto.setImage(album.getImage());
-
-        if (album.getArtiste() != null) {
-            dto.setArtisteId(album.getArtiste().getId());
+        if (dto == null) {
+            return null;
         }
 
-        return dto;
-    }
-
-    // DTO → ENTITY
-    public static Album toEntity(AlbumDTO dto) {
-
-        Album album = new Album();
-        album.setId(dto.getId());
-        album.setTitre(dto.getTitre());
-        album.setImage(dto.getImage());
+        Album album = Album.builder()
+                .titre(dto.getTitre())
+                .image(dto.getImage())
+                .build();
 
         if (dto.getArtisteId() != null) {
             Artiste artiste = new Artiste();
@@ -36,5 +28,24 @@ public class AlbumMapper {
         }
 
         return album;
+    }
+
+    // Entity → DTO
+    public AlbumResponseDTO toDTO(Album album) {
+
+        if (album == null) {
+            return null;
+        }
+
+        return AlbumResponseDTO.builder()
+                .id(album.getId())
+                .titre(album.getTitre())
+                .image(album.getImage())
+                .artisteId(
+                        album.getArtiste() != null
+                                ? album.getArtiste().getId()
+                                : null
+                )
+                .build();
     }
 }

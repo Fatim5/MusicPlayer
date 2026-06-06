@@ -1,17 +1,21 @@
 package com.music.music_player.services.interfaces;
 
-import com.music.music_player.dto.AlbumDTO;
-import com.music.music_player.entities.Album;
+import com.music.music_player.dto.requests.AlbumRequestDTO;
+import com.music.music_player.dto.responses.AlbumResponseDTO;
 
 import java.util.List;
 
 public interface AlbumService {
 
-    AlbumDTO save(Album album);
+    AlbumResponseDTO saveAlbum(AlbumRequestDTO RequestDTO);
 
-    List<AlbumDTO> findAll();
+    List<AlbumResponseDTO> findAllAlbums();
 
-    AlbumDTO findById(Long id);
+    AlbumResponseDTO findAlbumById(Long id);
 
-    void delete(Long id);
+    AlbumResponseDTO findAlbumByTitre(String titre);
+
+    AlbumResponseDTO updateAlbum(Long id, AlbumRequestDTO RequestDTO);
+
+    void deleteAlbum(Long id);
 }

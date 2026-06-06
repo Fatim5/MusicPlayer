@@ -1,33 +1,25 @@
 package com.music.music_player.mappers;
 
-import com.music.music_player.dto.ChansonDTO;
+import com.music.music_player.dto.requests.ChansonRequestDTO;
+import com.music.music_player.dto.responses.ChansonResponseDTO;
 import com.music.music_player.entities.Album;
 import com.music.music_player.entities.Chanson;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ChansonMapper {
 
-    // ENTITY → DTO
-    public static ChansonDTO toDTO(Chanson chanson) {
+    // DTO → Entity
+    public Chanson toEntity(ChansonRequestDTO dto) {
 
-        ChansonDTO dto = new ChansonDTO();
-        dto.setId(chanson.getId());
-        dto.setTitre(chanson.getTitre());
-        dto.setFichierAudio(chanson.getFichierAudio());
-
-        if (chanson.getAlbum() != null) {
-            dto.setAlbumId(chanson.getAlbum().getId());
+        if (dto == null) {
+            return null;
         }
 
-        return dto;
-    }
-
-    // DTO → ENTITY
-    public static Chanson toEntity(ChansonDTO dto) {
-
-        Chanson chanson = new Chanson();
-        chanson.setId(dto.getId());
-        chanson.setTitre(dto.getTitre());
-        chanson.setFichierAudio(dto.getFichierAudio());
+        Chanson chanson = Chanson.builder()
+                .titre(dto.getTitre())
+                .fichierAudio(dto.getFichierAudio())
+                .build();
 
         if (dto.getAlbumId() != null) {
             Album album = new Album();
@@ -36,5 +28,24 @@ public class ChansonMapper {
         }
 
         return chanson;
+    }
+
+    // Entity → DTO
+    public ChansonResponseDTO toDTO(Chanson entity) {
+
+        if (entity == null) {
+            return null;
+        }
+
+        return ChansonResponseDTO.builder()
+                .id(entity.getId())
+                .titre(entity.getTitre())
+                .fichierAudio(entity.getFichierAudio())
+                .albumId(
+                        entity.getAlbum() != null
+                                ? entity.getAlbum().getId()
+                                : null
+                )
+                .build();
     }
 }
